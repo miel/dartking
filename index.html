@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <title>Dartking</title>
+  <meta name="description" content="Houd je dartscore bij met uitgooi-advies">
+  <meta name="theme-color" content="#0f1115">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Dartking">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" href="icons/icon-192.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- 1. Instellingen + startpunten -->
+  <section id="screen-start" class="screen active">
+    <header class="top">
+      <h1>🎯 Dartking</h1>
+      <button class="icon-btn sound-toggle" aria-label="Geluid aan/uit">🔊</button>
+    </header>
+
+    <div class="scroll">
+      <div class="field">
+        <span class="label">Uitgooien</span>
+        <div class="seg-control" data-pref="outRule">
+          <button data-value="double">Double out</button>
+          <button data-value="single">Single out</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <span class="label">Legs (best of)</span>
+        <div class="seg-control" data-pref="legsBestOf">
+          <button data-value="1">1</button>
+          <button data-value="3">3</button>
+          <button data-value="5">5</button>
+          <button data-value="7">7</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <span class="label">Sets (best of)</span>
+        <div class="seg-control" data-pref="setsBestOf">
+          <button data-value="1">1</button>
+          <button data-value="3">3</button>
+          <button data-value="5">5</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <span class="label">Stem</span>
+        <div class="seg-control" data-pref="voiceLang">
+          <button data-value="en">Engels</button>
+          <button data-value="nl">Nederlands</button>
+        </div>
+      </div>
+
+      <h2>Met hoeveel punten begin je?</h2>
+      <div class="big-grid" id="start-scores">
+        <button class="big" data-score="101">101</button>
+        <button class="big" data-score="301">301</button>
+        <button class="big" data-score="501">501</button>
+        <button class="big" data-score="701">701</button>
+      </div>
+      <form class="custom-score" id="custom-score">
+        <input type="number" inputmode="numeric" min="2" max="9999" placeholder="Eigen aantal" id="custom-score-input">
+        <button type="submit" class="primary">OK</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- 2. Aantal spelers -->
+  <section id="screen-players" class="screen">
+    <header class="top">
+      <button class="icon-btn back" data-back="screen-start" aria-label="Terug">‹</button>
+      <h1>Spelers</h1>
+      <span class="icon-btn"></span>
+    </header>
+    <div class="scroll">
+      <h2>Hoeveel spelers doen er mee?</h2>
+      <div class="big-grid" id="player-counts">
+        <button class="big" data-count="1">1</button>
+        <button class="big" data-count="2">2</button>
+        <button class="big" data-count="3">3</button>
+        <button class="big" data-count="4">4</button>
+        <button class="big" data-count="5">5</button>
+        <button class="big" data-count="6">6</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Namen -->
+  <section id="screen-names" class="screen">
+    <header class="top">
+      <button class="icon-btn back" data-back="screen-players" aria-label="Terug">‹</button>
+      <h1>Namen</h1>
+      <span class="icon-btn"></span>
+    </header>
+    <form class="scroll" id="names-form">
+      <h2>Wie gooien er?</h2>
+      <div id="name-inputs"></div>
+      <button type="submit" class="primary wide">Start spel</button>
+    </form>
+  </section>
+
+  <!-- 4. Spel -->
+  <section id="screen-game" class="screen">
+    <header class="top">
+      <button class="icon-btn" id="game-menu-btn" aria-label="Menu">☰</button>
+      <span class="game-info" id="game-info"></span>
+      <button class="icon-btn sound-toggle" aria-label="Geluid aan/uit">🔊</button>
+    </header>
+
+    <div class="players" id="player-cards"></div>
+
+    <div class="current">
+      <div class="current-left">
+        <div class="current-name" id="current-name"></div>
+        <div class="current-score" id="current-score"></div>
+      </div>
+      <div class="current-right">
+        <div class="turn-darts" id="turn-darts"></div>
+        <div class="checkout" id="checkout"></div>
+      </div>
+    </div>
+
+    <div class="board-wrap" id="board"></div>
+
+    <div class="pad">
+      <button class="pad-btn" data-seg="0" data-mult="1">Mis</button>
+      <button class="pad-btn green" data-seg="25" data-mult="1">25</button>
+      <button class="pad-btn red" data-seg="25" data-mult="2">Bull</button>
+      <button class="pad-btn undo" id="undo-btn" aria-label="Ongedaan maken">↶</button>
+    </div>
+
+    <div class="toast" id="toast"></div>
+  </section>
+
+  <!-- 5. Einde -->
+  <section id="screen-end" class="screen">
+    <header class="top">
+      <span class="icon-btn"></span>
+      <h1>Gewonnen!</h1>
+      <span class="icon-btn"></span>
+    </header>
+    <div class="scroll">
+      <div class="winner" id="winner"></div>
+      <div class="stats-wrap"><table class="stats" id="stats-table"></table></div>
+      <button class="primary wide" id="rematch-btn">Opnieuw (zelfde spelers)</button>
+      <button class="secondary wide" id="home-btn">Hoofdmenu</button>
+      <button class="link" id="end-undo-btn">↶ Laatste pijl terugnemen</button>
+    </div>
+  </section>
+
+  <!-- Dialogen -->
+  <div class="modal" id="dlg-resume" hidden>
+    <div class="dialog">
+      <h3>Wil je verder gaan?</h3>
+      <p id="resume-text">Er is nog een spel bezig.</p>
+      <button class="primary wide" id="resume-yes">Verder spelen</button>
+      <button class="secondary wide" id="resume-no">Nieuw spel</button>
+    </div>
+  </div>
+
+  <div class="modal" id="dlg-leg" hidden>
+    <div class="dialog">
+      <h3 id="leg-title"></h3>
+      <p id="leg-text"></p>
+      <button class="primary wide" id="leg-ok">Volgende leg</button>
+    </div>
+  </div>
+
+  <div class="modal" id="dlg-menu" hidden>
+    <div class="dialog">
+      <h3>Menu</h3>
+      <button class="secondary wide" id="menu-stats">Statistieken</button>
+      <button class="secondary wide" id="menu-quit">Stoppen en naar hoofdmenu</button>
+      <button class="primary wide" id="menu-close">Verder spelen</button>
+    </div>
+  </div>
+
+  <div class="modal" id="dlg-stats" hidden>
+    <div class="dialog">
+      <h3>Statistieken</h3>
+      <div class="stats-wrap"><table class="stats" id="live-stats-table"></table></div>
+      <button class="primary wide" id="stats-close">Sluiten</button>
+    </div>
+  </div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+{
+  "name": "dartking",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node tests/game.test.js"
+  }
+}
